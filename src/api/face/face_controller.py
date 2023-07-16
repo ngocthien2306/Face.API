@@ -1,5 +1,6 @@
 import shutil
 import threading
+import time
 from typing import List
 
 import os
@@ -23,6 +24,7 @@ print("Mac Address: ", get_mac_address())
 
 
 def add_images_to_folders(folder_path, api_url):
+
     # Get a list of folder names in the specified directory
     folder_names = os.listdir(folder_path)
 
@@ -32,7 +34,7 @@ def add_images_to_folders(folder_path, api_url):
         return
 
     data = response.json()
-
+    start_time = time.time()
     # Retrieve the list of image files and folder names from the response
     for folder in data["result"]:
         image_base64 = data["result"][folder][0]['image_base64']
@@ -42,7 +44,9 @@ def add_images_to_folders(folder_path, api_url):
         image_path = os.path.join(folder_path, folder, data["result"][folder][0]['file_name'])  # Change the extension if needed
         with open(image_path, "wb") as f:
             f.write(image_data)
-
+            
+    end_time = time.time()
+    print(end_time - start_time)
     print("Images added to the folders successfully.")
 
 
@@ -82,7 +86,7 @@ def start_realtime():
     print(device)
     connection.disconnect()
     if len(device) > 0:
-        # start_real_time_check_in(device[0][-2], device[0][-1])
+        start_real_time_check_in(device[0][-5], device[0][-4])
         return {"status": "success", "message": "Real-time check-in started"}
     else:
         return {"status": "error", "message": "You not have permission"}
