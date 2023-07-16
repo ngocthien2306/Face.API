@@ -90,8 +90,6 @@ def assign_face_bank_all(conf, model, mtcnn, tta=True):
                 continue
             else:
                 emb_by_user = []
-
-                path = path / 'face'
                 for file in path.iterdir():
                     if not file.is_file():
                         continue
