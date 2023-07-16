@@ -57,7 +57,7 @@ class DeviceService:
         rows = self.connection.execute_query(query)
         return rows
     def get_by_mac_address(self, mac: str):
-        query = "SELECT * FROM tblStoreDevice WHERE DeviceKeyNo = '{0}'".format(mac)
+        query = "SELECT * FROM tblStoreDevice WHERE DeviceKeyNo = '{0}' AND DeviceType = 'DVC003'".format(mac)
         print(query)
         rows = self.connection.execute_query(query)
         return rows
