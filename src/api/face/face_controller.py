@@ -11,7 +11,7 @@ router_face = APIRouter()
 face_service = None
 real_time_thread = None
 
-
+print("Mac Address: ", get_mac_address())
 def run_real_time_check_in(net, th):
     global face_service
     face_service = FaceServices(threshold=th, network=net, update=True)
@@ -48,7 +48,14 @@ def start_realtime():
     else:
         return {"status": "error", "message": "You not have permission"}
 
+@router_face.post('/addusertofolder')
+async def add_user_to_folder():
+    return ''
 
+
+@router_face.post('/deleteusertofolder')
+async def delete_user_to_folder():
+    return ''
 
 @router_face.get("/stop-realtime")
 def stop_realtime():
