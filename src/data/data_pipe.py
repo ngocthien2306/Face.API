@@ -6,7 +6,6 @@ from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 import numpy as np
 import cv2
-import bcolz
 import pickle
 import torch
 import mxnet as mx
@@ -49,27 +48,28 @@ def get_train_loader(conf):
     return loader, class_num 
     
 def load_bin(path, rootdir, transform, image_size=[112,112]):
-    if not rootdir.exists():
-        rootdir.mkdir()
-    bins, issame_list = pickle.load(open(path, 'rb'), encoding='bytes')
-    data = bcolz.fill([len(bins), 3, image_size[0], image_size[1]], dtype=np.float32, rootdir=rootdir, mode='w')
-    for i in range(len(bins)):
-        _bin = bins[i]
-        img = mx.image.imdecode(_bin).asnumpy()
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-        img = Image.fromarray(img.astype(np.uint8))
-        data[i, ...] = transform(img)
-        i += 1
-        if i % 1000 == 0:
-            print('loading bin', i)
-    print(data.shape)
-    np.save(str(rootdir)+'_list', np.array(issame_list))
-    return data, issame_list
+    # if not rootdir.exists():
+    #     rootdir.mkdir()
+    # bins, issame_list = pickle.load(open(path, 'rb'), encoding='bytes')
+    # data = bcolz.fill([len(bins), 3, image_size[0], image_size[1]], dtype=np.float32, rootdir=rootdir, mode='w')
+    # for i in range(len(bins)):
+    #     _bin = bins[i]
+    #     img = mx.image.imdecode(_bin).asnumpy()
+    #     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    #     img = Image.fromarray(img.astype(np.uint8))
+    #     data[i, ...] = transform(img)
+    #     i += 1
+    #     if i % 1000 == 0:
+    #         print('loading bin', i)
+    # print(data.shape)
+    # np.save(str(rootdir)+'_list', np.array(issame_list))
+    return None, None
 
 def get_val_pair(path, name):
-    carray = bcolz.carray(rootdir = path/name, mode='r')
-    issame = np.load(path/'{}_list.npy'.format(name))
-    return carray, issame
+    # carray = bcolz.carray(rootdir = path/name, mode='r')
+    # issame = np.load(path/'{}_list.npy'.format(name))
+
+    return None, None
 
 def get_val_data(data_path):
     agedb_30, agedb_30_issame = get_val_pair(data_path, 'agedb_30')
