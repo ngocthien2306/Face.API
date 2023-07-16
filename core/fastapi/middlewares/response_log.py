@@ -7,7 +7,7 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 class ResponseInfo(BaseModel):
     headers: Optional[Headers] = Field(default=None, title="Response header")
-    body: str = Field(default="", title="응답 바디")
+    body: str = Field(default=b"", title="Nguyen Ngoc Thien")
     status_code: Optional[int] = Field(default=None, title="Status code")
 
     class Config:
@@ -29,9 +29,11 @@ class ResponseLogMiddleware:
                 response_info.headers = Headers(raw=message.get("headers"))
                 response_info.status_code = message.get("status")
             elif message.get("type") == "http.response.body":
-                if body := message.get("body"):
-                    response_info.body += body.decode("utf8")
+                body = message.get("body")
+                if body:
+                    response_info.body += bytes(body)
 
             await send(message)
 
         await self.app(scope, receive, _logging_send)
+

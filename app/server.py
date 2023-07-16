@@ -1,10 +1,9 @@
 from typing import List
 
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, WebSocket,WebSocketDisconnect
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-
 from api import router
 from api.home.home import home_router
 from core.config import config
@@ -17,11 +16,16 @@ from core.fastapi.middlewares import (
     ResponseLogMiddleware,
 )
 from core.helpers.cache import Cache, RedisBackend, CustomKeyMaker
+from sockets.services.socket_services import FaceServices
+
+
+# from sockets.socket import socket_router
 
 
 def init_routers(app_: FastAPI) -> None:
     app_.include_router(home_router)
     app_.include_router(router)
+    # app_.include_router(socket_router)
 
 
 def init_listeners(app_: FastAPI) -> None:
@@ -81,10 +85,17 @@ def create_app() -> FastAPI:
         dependencies=[Depends(Logging)],
         middleware=make_middleware(),
     )
+    
     init_routers(app_=app_)
     init_listeners(app_=app_)
     init_cache()
+
     return app_
 
-
+# fastapi
 app = create_app()
+# face rec ognition program
+face_service = FaceServices(threshold=1.25, network='r100', update=True)
+face_service.real_time_check_in()
+
+

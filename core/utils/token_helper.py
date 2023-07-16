@@ -6,6 +6,13 @@ from core.config import config
 from core.exceptions import DecodeTokenException, ExpiredTokenException
 
 
+def get_mac_address():
+    from uuid import getnode as get_mac
+    mac = get_mac()
+    macString = ''.join(("%012X" % mac)[i:i + 2] for i in range(0, 12, 2))
+    return macString
+
+
 class TokenHelper:
     @staticmethod
     def encode(payload: dict, expire_period: int = 3600) -> str:
@@ -16,7 +23,7 @@ class TokenHelper:
             },
             key=config.JWT_SECRET_KEY,
             algorithm=config.JWT_ALGORITHM,
-        ).decode("utf8")
+        )
         return token
 
     @staticmethod

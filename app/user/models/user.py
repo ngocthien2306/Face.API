@@ -5,10 +5,10 @@ from core.db.mixins import TimestampMixin
 
 
 class User(Base, TimestampMixin):
-    __tablename__ = "users"
+    __tablename__ = "tblUser"
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    password = Column(Unicode(255), nullable=False)
-    email = Column(Unicode(255), nullable=False, unique=True)
-    nickname = Column(Unicode(255), nullable=False, unique=True)
-    is_admin = Column(Boolean, default=False)
+    Id = Column(BigInteger, primary_key=True, autoincrement=True)
+    Password = Column(Unicode(255), nullable=False)
+    Email = Column(Unicode(255), nullable=False, unique=True)
+    NickName = Column(Unicode(255), nullable=False, unique=True)
+    IsAdmin = Column(Boolean, default=False)

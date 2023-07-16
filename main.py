@@ -4,6 +4,7 @@ import click
 import uvicorn
 
 from core.config import config
+from sockets.services.socket_services import FaceServices
 
 
 @click.command()
@@ -32,3 +33,4 @@ def main(env: str, debug: bool):
 
 if __name__ == "__main__":
     main()
+
