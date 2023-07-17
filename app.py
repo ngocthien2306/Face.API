@@ -22,6 +22,7 @@ if __name__ == "__main__":
     import uvicorn
     connection.connect()
     service = DeviceService(connection)
-    device = service.get_ip_by_mac_address(get_mac_address())
+    device = service.get_info_by_mac_address(get_mac_address())
+    print(device)
     connection.disconnect()
-    uvicorn.run(app, host=device[0][0], port=8000)
+    uvicorn.run(app, host=device[0][0], port=device[0][1])

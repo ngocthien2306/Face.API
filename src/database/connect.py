@@ -61,8 +61,14 @@ class DeviceService:
         rows = self.connection.execute_query(query)
         return rows
 
-    def get_ip_by_mac_address(self, mac: str):
-        query = "SELECT DevicePublicIP FROM tblStoreDevice WHERE DeviceKeyNo = '{0}' AND DeviceType = 'DVC003'".format(mac)
+    def get_some_field(self, mac: str):
+        query = "SELECT Network, Threshold =  (SELECT CommonSubName2 FROM tblCommonSub WHERE CommonSubCode = Threshold), " \
+                "FaceLimit, MinFaceSize, Attemp FROM tblStoreDevice WHERE DeviceKeyNo = '{0}' AND DeviceType = 'DVC003'".format(mac)
+        print(query)
+        rows = self.connection.execute_query(query)
+        return rows
+    def get_info_by_mac_address(self, mac: str):
+        query = "SELECT DevicePublicIP, DeviceUsePort FROM tblStoreDevice WHERE DeviceKeyNo = '{0}' AND DeviceType = 'DVC003'".format(mac)
         rows = self.connection.execute_query(query)
         return rows
     def get_records_by_condition(self, condition):

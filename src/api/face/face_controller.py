@@ -59,8 +59,6 @@ def add_images_to_folders(folder_path, api_url):
     print(end_time - start_time)
     print("Images added to the folders successfully.")
 
-
-
 def download_zip():
     folder_user = "./public/images/users"
     endpoint = "http://26.115.12.45:8005/api/v1/users/downloadfolder"
@@ -80,7 +78,6 @@ def download_zip():
     else:
         print("Error downloading zip file:", response.status_code)
 
-
 # folder_path = "./public/images/users"
 # api_url = "http://26.115.12.45:8005/api/v1/users/checkfaceuserfolder"
 # add_images_to_folders(folder_path, api_url)
@@ -89,15 +86,15 @@ download_zip()
 
 
 
-def run_real_time_check_in(net, th):
+def run_real_time_check_in(net, th, min_face, size_face, attempt):
     global face_service
-    face_service = FaceServices(threshold=th, network=net, update=True)
+    face_service = FaceServices(threshold=th, network=net, update=True, min_face=min_face, size_face=size_face, attempt=attempt)
     face_service.real_time_check_in()
 
 
-def start_real_time_check_in(net, th):
+def start_real_time_check_in(net, th, min_face, size_face, attempt):
     global real_time_thread
-    real_time_thread = threading.Thread(target=run_real_time_check_in, args=(net, th))
+    real_time_thread = threading.Thread(target=run_real_time_check_in, args=(net, th, min_face, size_face, attempt))
     real_time_thread.start()
 
 
@@ -116,11 +113,11 @@ def start_realtime():
     stop_real_time_check_in()
     connection.connect()
     service = DeviceService(connection)
-    device = service.get_by_mac_address(get_mac_address())
+    device = service.get_some_field(get_mac_address())
     print(device)
     connection.disconnect()
     if len(device) > 0:
-        start_real_time_check_in(device[0][-5], device[0][-4])
+        start_real_time_check_in(device[0][0], float(device[0][1]), device[0][2], device[0][3], device[0][4])
         return {"status": "success", "message": "Real-time check-in started"}
     else:
         return {"status": "error", "message": "You not have permission"}
