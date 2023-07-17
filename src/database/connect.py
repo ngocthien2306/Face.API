@@ -47,7 +47,6 @@ class DatabaseConnection:
         rows = self.cursor.fetchall()
         return rows
 
-
 class DeviceService:
     def __init__(self, connection):
         self.connection = connection
@@ -59,6 +58,11 @@ class DeviceService:
     def get_by_mac_address(self, mac: str):
         query = "SELECT * FROM tblStoreDevice WHERE DeviceKeyNo = '{0}' AND DeviceType = 'DVC003'".format(mac)
         print(query)
+        rows = self.connection.execute_query(query)
+        return rows
+
+    def get_ip_by_mac_address(self, mac: str):
+        query = "SELECT DevicePublicIP FROM tblStoreDevice WHERE DeviceKeyNo = '{0}' AND DeviceType = 'DVC003'".format(mac)
         rows = self.connection.execute_query(query)
         return rows
     def get_records_by_condition(self, condition):

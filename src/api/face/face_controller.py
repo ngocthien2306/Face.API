@@ -1,12 +1,11 @@
 import shutil
 import threading
 import time
-from typing import List
 import zipfile
+from typing import List
 import os
 import base64
 import requests
-
 from core.utils.token_helper import get_mac_address
 from sockets.services.socket_services import FaceServices
 from fastapi import WebSocket
@@ -14,7 +13,7 @@ from fastapi import APIRouter
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from src.database.connect import connection, DeviceService
-import traceback
+
 
 router_face = APIRouter()
 
@@ -25,6 +24,7 @@ print("Mac Address: ", get_mac_address())
 
 
 def add_images_to_folders(folder_path, api_url):
+
     # Get a list of folder names in the specified directory
     folder_names = os.listdir(folder_path)
 
@@ -39,6 +39,7 @@ def add_images_to_folders(folder_path, api_url):
     for idx, folder in enumerate(data['result']):
         image_base64 = data["result"][folder][idx]['image_base64']
         image_data = base64.b64decode(image_base64)
+
         os.makedirs(os.path.join(folder_path, folder), exist_ok=True)
         # Save the image to the specified folder
         image_path = os.path.join(folder_path, folder,
@@ -46,9 +47,18 @@ def add_images_to_folders(folder_path, api_url):
         with open(image_path, "wb") as f:
             f.write(image_data)
 
+
+        print(image_data[:10])
+        os.makedirs(os.path.join(folder_path, folder), exist_ok=True)
+        # Save the image to the specified folder
+        image_path = os.path.join(folder_path, folder, data["result"][folder][0]['file_name'])  # Change the extension if needed
+        with open(image_path, "wb") as f:
+            f.write(image_data)
+
     end_time = time.time()
     print(end_time - start_time)
     print("Images added to the folders successfully.")
+
 
 
 def download_zip():
@@ -76,6 +86,7 @@ def download_zip():
 # add_images_to_folders(folder_path, api_url)
 
 download_zip()
+
 
 
 def run_real_time_check_in(net, th):
@@ -137,7 +148,6 @@ async def synchronous_user():
         return {"status": True}
     except:
         return {"status": False}
-
 
 @router_face.get('/listfiles')
 async def list_files():

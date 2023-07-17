@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from core.config import config
+from core.utils.token_helper import get_mac_address
 from src.api.face.face_controller import router_face
 from src.api.home.home_controller import router_root
+from src.database.connect import connection, DeviceService
 
 app = FastAPI(
     title="Hide",
@@ -14,7 +16,12 @@ app = FastAPI(
 app.include_router(router_root)
 app.include_router(router_face, prefix="/api/face")
 
+
+
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="26.115.12.45", port=8000)
+    connection.connect()
+    service = DeviceService(connection)
+    device = service.get_ip_by_mac_address(get_mac_address())
+    connection.disconnect()
+    uvicorn.run(app, host=device[0][0], port=8000)
