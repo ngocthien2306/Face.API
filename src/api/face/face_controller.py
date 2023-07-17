@@ -35,10 +35,11 @@ def add_images_to_folders(folder_path, api_url):
 
     data = response.json()
     start_time = time.time()
-    # Retrieve the list of image files and folder names from the response
-    for folder in data["result"]:
-        image_base64 = data["result"][folder][0]['image_base64']
+
+    for idx, folder in enumerate(data['result']):
+        image_base64 = data["result"][folder][idx]['image_base64']
         image_data = base64.b64decode(image_base64)
+        print(image_data[:10])
         os.makedirs(os.path.join(folder_path, folder), exist_ok=True)
         # Save the image to the specified folder
         image_path = os.path.join(folder_path, folder, data["result"][folder][0]['file_name'])  # Change the extension if needed
