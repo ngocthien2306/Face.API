@@ -11,12 +11,11 @@ from src.data.data_pipe import de_preprocess
 import torch
 from src.model import l2_norm
 import cv2
-import pandas as pd
 import pickle
-
-
 import pygame
 from pydub import AudioSegment
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 def convert_to_wav(mp3_file, wav_file):
     audio = AudioSegment.from_mp3(mp3_file)
@@ -62,8 +61,8 @@ def embedding_face(img, model):
     img_flip_tensor = transform(img_flip).unsqueeze(0)
 
     # Send the tensors to the GPU (assuming CUDA is available)
-    img_tensor = img_tensor.cuda()
-    img_flip_tensor = img_flip_tensor.cuda()
+    img_tensor = img_tensor.to(device)
+    img_flip_tensor = img_flip_tensor.to(device)
 
     # Pass the tensors through the model
 
@@ -87,11 +86,11 @@ def assign_face_bank_all(conf, model, mtcnn, tta=True):
         for path in main_path.iterdir():
             path_new = path
             folder_name = ''
+
             if path.is_file():
                 continue
             else:
                 emb_by_user = []
-
                 path = path / 'face'
                 for file in path.iterdir():
                     if not file.is_file():

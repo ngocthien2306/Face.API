@@ -16,10 +16,11 @@ from torchvision import transforms as trans
 import math
 from src.backbones import get_model
 
-
+device = "cuda" if torch.cuda.is_available() else "cpu"
 def load_model(weight_path, network):
-    weight = torch.load(weight_path, map_location=torch.device("cuda"))
-    model = get_model(network, dropout=0, fp16=True).cuda()
+    weight = torch.load(weight_path, map_location=torch.device(device))
+
+    model = get_model(network, dropout=0, fp16=True).to(device)
     model.load_state_dict(weight)
     model = torch.nn.DataParallel(model)
     model.eval()
@@ -278,8 +279,8 @@ class face_learner(object):
         img_flip_tensor = transform(img_flip).unsqueeze(0)
 
         # Send the tensors to the GPU (assuming CUDA is available)
-        img_tensor = img_tensor.cuda()
-        img_flip_tensor = img_flip_tensor.cuda()
+        img_tensor = img_tensor.to(device)
+        img_flip_tensor = img_flip_tensor.to(device)
 
         # Pass the tensors through the model
 

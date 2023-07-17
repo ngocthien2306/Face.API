@@ -167,4 +167,4 @@ src/data/facebank/*.pkl
 src/data/facebank/*.mp4
 src/data/facebank/*.npy
 src/work_spaces/save
-
+public
