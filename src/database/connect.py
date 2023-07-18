@@ -63,7 +63,8 @@ class DeviceService:
 
     def get_some_field(self, mac: str):
         query = "SELECT Network, Threshold =  (SELECT CommonSubName2 FROM tblCommonSub WHERE CommonSubCode = Threshold), " \
-                "FaceLimit, MinFaceSize, Attemp FROM tblStoreDevice WHERE DeviceKeyNo = '{0}' AND DeviceType = 'DVC003'".format(mac)
+                "FaceLimit, MinFaceSize, Attemp, (SELECT StoreName FROM tblStoreMaster WHERE StoreNo = tblStoreDevice.StoreNo) " \
+                "+ ' - ' + DeviceName AS DeviceName FROM tblStoreDevice WHERE DeviceKeyNo = '{0}' AND DeviceType = 'DVC003'".format(mac)
         print(query)
         rows = self.connection.execute_query(query)
         return rows

@@ -86,15 +86,15 @@ download_zip()
 
 
 
-def run_real_time_check_in(net, th, min_face, size_face, attempt):
+def run_real_time_check_in(net, th, min_face, size_face, attempt, device_name):
     global face_service
-    face_service = FaceServices(threshold=th, network=net, update=True, min_face=min_face, size_face=size_face, attempt=attempt)
+    face_service = FaceServices(threshold=th, network=net, update=True, min_face=min_face, size_face=size_face, attempt=attempt, deviceName=device_name)
     face_service.real_time_check_in()
 
 
-def start_real_time_check_in(net, th, min_face, size_face, attempt):
+def start_real_time_check_in(net, th, min_face, size_face, attempt, device_name):
     global real_time_thread
-    real_time_thread = threading.Thread(target=run_real_time_check_in, args=(net, th, min_face, size_face, attempt))
+    real_time_thread = threading.Thread(target=run_real_time_check_in, args=(net, th, min_face, size_face, attempt, device_name))
     real_time_thread.start()
 
 
@@ -117,7 +117,7 @@ def start_realtime():
     print(device)
     connection.disconnect()
     if len(device) > 0:
-        start_real_time_check_in(device[0][0], float(device[0][1]), device[0][2], device[0][3], device[0][4])
+        start_real_time_check_in(device[0][0], float(device[0][1]), device[0][2], device[0][3], device[0][4], device[0][5])
         return {"status": "success", "message": "Real-time check-in started"}
     else:
         return {"status": "error", "message": "You not have permission"}
@@ -134,6 +134,8 @@ async def add_user_to_folder(user_ids: List[str], files: List[UploadFile] = File
         file_path = os.path.join(user_folder_path, f"{user_id}_{file.filename}")
         with open(file_path, "wb") as f:
             f.write(await file.read())
+
+            print("Add user to folder successfully!")
 
     return JSONResponse(content={"message": "Files uploaded successfully"})
 

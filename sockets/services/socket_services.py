@@ -21,12 +21,13 @@ class FaceServices:
     #         cls._instance = super(FaceServices, cls).__new__(cls, *args, **kwargs)
     #     return cls._instance
 
-    def __init__(self, threshold=1.4, network='r34', tta=True, update=False, pkl=True, show_score=True, min_face=2, size_face=100, attempt=10):
+    def __init__(self, threshold=1.4, network='r34', tta=True, update=False, pkl=True, show_score=True, min_face=2, size_face=100, attempt=10, device_name=None):
         self.is_real_time_running = None
         self.conf = get_config(False)
         self.conf.network = network
         self.attempt_model = attempt;
         self.curr_network = network
+        self.device_name = device_name
         self.pkl = pkl
         self.min_face =  min_face
         self.size_face = size_face
@@ -37,6 +38,7 @@ class FaceServices:
         self.learner = face_learner(self.conf, True)
         self.threshold = threshold
         self.learner.threshold = self.threshold
+        self.curr_user_checkin = None
         if self.conf.network in ['ir_se50', 'mobilefacenet']:
             self.learner.load_state(self.conf, str(self.conf.network) + '.pth', True, True)
         self.learner.model.eval()
@@ -92,8 +94,8 @@ class FaceServices:
         fps_interval = 1  # Number of seconds between FPS updates
         fps_start_time = time.time()
         fps_frame_count = 0
-        cv2.namedWindow('face Capture', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('face Capture', 1000, 562)
+        cv2.namedWindow(self.device_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(self.device_name, 1000, 562)
 
         frame_start_time = time.time()  # Track the start time of each frame
 
@@ -111,7 +113,7 @@ class FaceServices:
                     # traceback.print_exc()
                     pass
 
-                cv2.imshow('face Capture', frame)
+                cv2.imshow(self.device_name, frame)
 
                 # Calculate FPS
                 fps_frame_count += 1
@@ -122,6 +124,7 @@ class FaceServices:
                     fps_start_time = time.time()
 
                 if cap.get(cv2.CAP_PROP_POS_MSEC) % 300 == 0:
+                    print("Reload folder")
                     if len(self.get_db_path()) != len(self.representations):
                         self.get_datasource()
 
@@ -159,7 +162,10 @@ class FaceServices:
 
             print(self.attempt)
 
-            if self.attempt == 0:
+            if self.attempt == 0 and self.curr_user_checkin != self.curr_user:
+                print("check-in")
+                self.curr_user_checkin = self.curr_user
+
                 connection.connect()
                 service = FaceCheckInService(connection)
                 data = {
@@ -168,10 +174,9 @@ class FaceServices:
                     'faceImage': faces[idx]
                 }
                 try:
-                    service.insert_record(data)
-
+                    # service.insert_record(data)
                     if results[0]['identity'][idx] == 'Unknown':
-                        print()
+                        wav_file = "./public/files/audio/fail-checkin.wav"
                     else:
                         wav_file = "./public/files/audio/checkin.wav"
                     play_sound(wav_file)
@@ -180,6 +185,15 @@ class FaceServices:
                     connection.disconnect()
 
                 connection.disconnect()
+                self.attempt = self.attempt_model
+
+
+            elif self.attempt == 0:
+                if results[0]['identity'][idx] == 'Unknown':
+                    wav_file = "./public/files/audio/fail-checkin.wav"
+                else:
+                    wav_file = "./public/files/audio/already_checkin.wav"
+                play_sound(wav_file)
                 self.attempt = self.attempt_model
 
     def convertbase64(self, string64):
