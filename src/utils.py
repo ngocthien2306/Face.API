@@ -103,40 +103,42 @@ def assign_face_bank_all(conf, model, mtcnn, tta=True):
             else:
                 emb_by_user = []
                 path = path / 'face'
-                for file in path.iterdir():
-                    if not file.is_file():
-                        continue
-                    else:
-                        try:
-                            img = Image.open(file)
-
-                        except:
+                try:
+                    for file in path.iterdir():
+                        if not file.is_file():
                             continue
-                        if img.size != (112, 112):
+                        else:
                             try:
-                                img = mtcnn.align(img)
+                                img = Image.open(file)
+
                             except:
                                 continue
+                            if img.size != (112, 112):
+                                try:
+                                    img = mtcnn.align(img)
+                                except:
+                                    continue
 
-                        if idx == 1:
-                            folder_name = path_new.name
-                        else:
-                            folder_name = path.name
-
-                        with torch.no_grad():
-                            if tta:
-                                if conf.network in ['r100', 'vit', 'r34', 'r18', 'mbf']:
-                                    emb = embedding_face(img, model)
-                                    emb_by_user.append(emb)
-                                    # representations.append([folder_name, emb.cpu().detach().numpy(), folder])
-                                else:
-                                    flip_img = trans.functional.hflip(img)
-                                    emb = model(conf.test_transform(img).to(conf.device).unsqueeze(0))
-                                    emb_mirror = model(conf.test_transform(flip_img).to(conf.device).unsqueeze(0))
-                                    emb_by_user.append(l2_norm(emb + emb_mirror))
+                            if idx == 1:
+                                folder_name = path_new.name
                             else:
-                                emb_by_user.append(model(conf.test_transform(img).to(conf.device).unsqueeze(0)))
+                                folder_name = path.name
 
+                            with torch.no_grad():
+                                if tta:
+                                    if conf.network in ['r100', 'vit', 'r34', 'r18', 'mbf']:
+                                        emb = embedding_face(img, model)
+                                        emb_by_user.append(emb)
+                                        # representations.append([folder_name, emb.cpu().detach().numpy(), folder])
+                                    else:
+                                        flip_img = trans.functional.hflip(img)
+                                        emb = model(conf.test_transform(img).to(conf.device).unsqueeze(0))
+                                        emb_mirror = model(conf.test_transform(flip_img).to(conf.device).unsqueeze(0))
+                                        emb_by_user.append(l2_norm(emb + emb_mirror))
+                                else:
+                                    emb_by_user.append(model(conf.test_transform(img).to(conf.device).unsqueeze(0)))
+                except:
+                    continue
             if len(emb_by_user) == 0:
                 continue
             embedding = torch.cat(emb_by_user).mean(0, keepdim=True)
