@@ -6,7 +6,7 @@ from src.Learner import face_learner
 from src.database.connect import connection
 from src.mtcnn import MTCNN
 from src.services.face.face_services import FaceCheckInService
-from src.utils import draw_box_name, load_facebank_csv, assign_face_bank_all, play_sound
+from src.utils import draw_box_name, load_facebank_csv, assign_face_bank_all, play_sound, schedule_play_audio
 import traceback
 import time
 from src.detect.src.align_trans import get_reference_facial_points
@@ -178,7 +178,7 @@ class FaceServices:
                     if results[0]['identity'][idx] == 'Unknown':
                         wav_file = "./public/files/audio/fail-checkin.wav"
                     else:
-                        wav_file = "./public/files/audio/checkin.wav"
+                        wav_file = schedule_play_audio()
                     play_sound(wav_file)
 
                 except:
