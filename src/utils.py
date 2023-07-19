@@ -92,7 +92,8 @@ def assign_face_bank_all(conf, model, mtcnn, tta=True):
             else:
                 emb_by_user = []
                 path = path / 'face'
-                for file in path.iterdir():
+                try:
+                    for file in path.iterdir():
                     if not file.is_file():
                         continue
                     else:
@@ -125,7 +126,8 @@ def assign_face_bank_all(conf, model, mtcnn, tta=True):
                                     emb_by_user.append(l2_norm(emb + emb_mirror))
                             else:
                                 emb_by_user.append(model(conf.test_transform(img).to(conf.device).unsqueeze(0)))
-
+                except:
+                    continue
             if len(emb_by_user) == 0:
                 continue
             embedding = torch.cat(emb_by_user).mean(0, keepdim=True)

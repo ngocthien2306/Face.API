@@ -88,7 +88,7 @@ download_zip()
 
 def run_real_time_check_in(net, th, min_face, size_face, attempt, device_name):
     global face_service
-    face_service = FaceServices(threshold=th, network=net, update=True, min_face=min_face, size_face=size_face, attempt=attempt, deviceName=device_name)
+    face_service = FaceServices(threshold=th, network=net, update=True, min_face=min_face, size_face=size_face, attempt=attempt, device_name=device_name)
     face_service.real_time_check_in()
 
 
