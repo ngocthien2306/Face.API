@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 from PIL import Image
-from torch.autograd import Variable
 
 from src.detect.src.align_trans import get_reference_facial_points, warp_and_crop_face
 from src.detect.src.box_utils import nms, calibrate_box, convert_to_square, get_image_boxes
@@ -9,9 +8,6 @@ from src.detect.src.first_stage import run_first_stage
 from src.detect.src.get_nets import PNet, RNet, ONet
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-# device = 'cpu'
 
 class MTCNN():
     def __init__(self):

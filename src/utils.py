@@ -1,9 +1,6 @@
-from datetime import datetime
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
-import pickle
-
 plt.switch_backend('agg')
 import io
 from torchvision import transforms as trans
@@ -14,8 +11,16 @@ import cv2
 import pickle
 import pygame
 from pydub import AudioSegment
+from datetime import datetime
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+shifts = [['05:00:00', '10:59:59', './public/files/audio/morning.wav'],
+          ['11:00:00', '13:29:59', './public/files/audio/lunch.wav'],
+          ['13:30:00', '17:59:59', './public/files/audio/after.wav'],
+          ['18:00:00', '21:59:59', './public/files/audio/evening.wav'],
+          ['22:00:00', '04:59:59', '']]
+
 
 def convert_to_wav(mp3_file, wav_file):
     audio = AudioSegment.from_mp3(mp3_file)
@@ -26,7 +31,13 @@ def play_sound(file_path):
     pygame.mixer.music.load(file_path)
     pygame.mixer.music.play()
 
-
+def schedule_play_audio():
+    time_now = str(datetime.now().time())
+    file = ''
+    for shift in shifts:
+        if shift[0] < time_now < shift[1]:
+            file = shift[2]
+    return file
 
 def separate_bn_paras(modules):
     if not isinstance(modules, list):
