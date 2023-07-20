@@ -174,7 +174,7 @@ class FaceServices:
                     'faceImage': faces[idx]
                 }
                 try:
-                    # service.insert_record(data)
+                    service.insert_record(data)
                     if results[0]['identity'][idx] == 'Unknown':
                         wav_file = "./public/files/audio/fail-checkin.wav"
                     else:
