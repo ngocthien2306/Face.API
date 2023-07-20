@@ -93,7 +93,7 @@ def assign_face_bank_all(conf, model, mtcnn, tta=True):
     representations = []
 
     names = ['Unknown']
-    for idx, main_path in enumerate([conf.no_user_path, conf.user_path]):
+    for idx, main_path in enumerate([conf.user_path]):
         for path in main_path.iterdir():
             path_new = path
             folder_name = ''

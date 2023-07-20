@@ -346,6 +346,7 @@ class face_learner(object):
 
             df['distances'] = distances
             df = df[df['distances'] < self.threshold]
+
             if len(df) > 0:
                 df = df.sort_values(
                     by=["distances"], ascending=True
