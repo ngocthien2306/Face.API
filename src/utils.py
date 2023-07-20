@@ -19,7 +19,7 @@ shifts = [['05:00:00', '10:59:59', './public/files/audio/morning.wav'],
           ['11:00:00', '13:29:59', './public/files/audio/lunch.wav'],
           ['13:30:00', '17:59:59', './public/files/audio/after.wav'],
           ['18:00:00', '21:59:59', './public/files/audio/evening.wav'],
-          ['22:00:00', '04:59:59', '']]
+          ['22:00:00', '04:59:59', './public/files/audio/evening.wav']]
 
 
 def convert_to_wav(mp3_file, wav_file):
