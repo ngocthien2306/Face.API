@@ -12,7 +12,7 @@ import pickle
 import pygame
 from pydub import AudioSegment
 from datetime import datetime
-
+import traceback
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 shifts = [['05:00:00', '10:59:59', './public/files/audio/morning.wav'],
@@ -87,7 +87,7 @@ def embedding_face(img, model):
     return normalized_embedding
 
 def assign_face_bank_all(conf, model, mtcnn, tta=True):
-    print("assign_facebank")
+    print("assign_facebank assign_face_bank_all")
     model.eval()
     embeddings = []
     representations = []
@@ -110,19 +110,17 @@ def assign_face_bank_all(conf, model, mtcnn, tta=True):
                         else:
                             try:
                                 img = Image.open(file)
-
                             except:
                                 continue
                             if img.size != (112, 112):
                                 try:
                                     img = mtcnn.align(img)
                                 except:
+                                    traceback.print_exc()
                                     continue
 
-                            if idx == 1:
-                                folder_name = path_new.name
-                            else:
-                                folder_name = path.name
+                            folder_name = path_new.name
+
 
                             with torch.no_grad():
                                 if tta:
@@ -157,7 +155,7 @@ def assign_face_bank_all(conf, model, mtcnn, tta=True):
     return embeddings, names, representations
 
 def assign_facebank(conf, model, mtcnn, tta=True):
-    print("assign_facebank")
+    print("assign_facebank 123")
     model.eval()
     embeddings = []
     representations = []

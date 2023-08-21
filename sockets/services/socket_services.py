@@ -60,7 +60,8 @@ class FaceServices:
             self.targets, self.names, self.representations = assign_face_bank_all(self.conf, self.learner.model,
                                                                                   self.mtcnn, tta=self.tta)
         else:
-            self.targets, self.names, self.representations = load_facebank_csv(self.conf)
+            self.targets, self.names, self.representations = assign_face_bank_all(self.conf, self.learner.model,
+                                                                                  self.mtcnn, tta=self.tta)
 
     def get_db_path(self):
         paths = []
@@ -159,8 +160,6 @@ class FaceServices:
                 self.attempt = self.attempt_model
             else:
                 self.attempt -= 1
-
-            print(self.attempt)
 
             if self.attempt == 0 and self.curr_user_checkin != self.curr_user:
                 print("check-in")

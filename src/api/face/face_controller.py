@@ -129,7 +129,7 @@ async def add_user_to_folder(user_ids: List[str], files: List[UploadFile] = File
         user_folder_path = os.path.join(folder_path, user_id)
         os.makedirs(user_folder_path, exist_ok=True)  # Create the user's folder if it doesn't exist
 
-        file_path = os.path.join(user_folder_path, f"{user_id}_{file.filename}")
+        file_path = os.path.join(user_folder_path, user_id, f"{user_id}_{file.filename}")
         with open(file_path, "wb") as f:
             f.write(await file.read())
 
